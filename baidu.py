@@ -25,7 +25,7 @@ def baidu(company):
 #######数据清洗
         source = []
         date = []
-        db = pymysql.connect(host='192.168.8.176', port=3306, user='james', password='Fxa@880202', database='companynews')
+        db = pymysql.connect(host='47.112.213.237', port=3306, user='admin', password='Fxa@880202', database='companynews')
         print('db--success')
         sql_select = 'SELECT news_title FROM news WHERE news_company = %s'
         curone = db.cursor()
