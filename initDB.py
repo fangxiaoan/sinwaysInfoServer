@@ -19,10 +19,10 @@ def create_table():
     sql = """CREATE TABLE news(
             id INT NOT NULL AUTO_INCREMENT primary key,
             news_title char(40),
-            news_link char(40),
+            news_from char(40),
             news_company char(30),
-            news_date char(20),
-            news_time char(20)
+            news_link char(20),
+            news_date char(20)
              )"""
 
     try:

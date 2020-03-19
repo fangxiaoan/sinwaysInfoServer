@@ -1,6 +1,7 @@
 import requests
 import re
 import pymysql
+import time
 def baidu(company):
         url = 'https://www.baidu.com/s?rtt=1&bsst=1&cl=2&tn=news&word=' + company
 
@@ -47,6 +48,14 @@ def baidu(company):
                 date.append(info[i].split('&nbsp;&nbsp;')[1])
                 source[i] = source[i].strip()
                 date[i] = date[i].strip()
+                date[i] = date[i].split(' ')[0]
+                date[i] = re.sub('年', '-', date[i])
+                date[i] = re.sub('月', '-', date[i])
+                date[i] = re.sub('日', '', date[i])
+                if('小时' in date[i]) or ('分钟' in date[i]):
+                        date[i] = time.strftime("%Y-%m-%d")
+                else:
+                        date[i] = date[i]
 
                 print(str(i+1) + '.' + title[i] + '(' + date[i] + '-' + source[i] + ')' )
                 print(href[i])
@@ -56,18 +65,23 @@ def baidu(company):
                 file1.write('--------------------------------------------------------------' + '\n' + '\n' )
                 if title[i] not in title_all:
                         cur=db.cursor()
-                        sql = 'INSERT INTO news(news_title,news_link,news_company,news_date,news_time) VALUES (%s,%s,%s,%s,%s)'
-                        cur.execute(sql,(title[i],source[i],company,date[i],date[i]))
+                        sql = 'INSERT INTO news(news_title,news_from,news_company,news_link,news_date) VALUES (%s,%s,%s,%s,%s)'
+
+                        cur.execute(sql,(title[i],source[i],company,href[i],date[i]))
+                        print("insert to mysql success")
                         db.commit()
                         cur.close()
                         print("insert to mysql success")
         file1.close()
         db.close()
-companys = ['南大光电','科蓝软件','中国平安','科大讯飞','招商证券']
-for i in companys:
-        try:
-                baidu(i)
-                print(i + "百度新闻爬取成功")
-        except:
-                print(i + '百度新闻爬取失败')
+
+while True:
+        companys = ['南大光电','科蓝软件','中国平安','科大讯飞','招商证券']
+        for i in companys:
+                try:
+                        baidu(i)
+                        print(i + "百度新闻爬取成功")
+                except:
+                        print(i + '百度新闻爬取失败')
+        time.sleep(10800)
 
